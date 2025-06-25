@@ -2,8 +2,7 @@ import { useState } from 'react'
 // import { loginApi } from './service/firebaseLogin';
 import { storeUserData } from './service/storage';
 import { isAuth } from './service/auth';
-import {  Navigate } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google';
+import {  Link,Navigate } from 'react-router-dom';
 import { signInUser, signInWithGoogle } from './service/firebaseConfig';
 
 
@@ -15,6 +14,7 @@ const Login = () => {
   }
   const [errors,setErrors] =  useState(initialErrorState);
   const [loading,setLoading] = useState(false);
+  const [redirectToEditor,setredirectToEditor] = useState(false);
 
   const [inputs,setInputs] = useState({
       email:"",
@@ -57,9 +57,13 @@ const Login = () => {
     setErrors({...errors});
   }
 
-  const handleGoogleLogin = () =>{
+  const handleGoogleLogin = async () =>{
     signInWithGoogle().then((res)=>{
-      storeUserData(res._tokenResponse.idToken);
+      console.log();
+      storeUserData(res.user.accessToken);
+      if(res.user){
+        setredirectToEditor(true);
+      }
     }).catch((err)=>{
       console.log(err.message)
     })
@@ -75,7 +79,7 @@ const Login = () => {
     setInputs({...inputs,[e.target.name]:e.target.value})
   }
 
-  if(isAuth()){
+  if(redirectToEditor || isAuth()){
     return <Navigate to='/editor' />
   }
 
@@ -179,7 +183,7 @@ const Login = () => {
 
           <div className="mt-6 text-center text-sm text-gray-600">
             Don't have an account? 
-            <a href="/register" className="text-indigo-600 hover:text-indigo-500 font-medium">Sign up</a>
+            <Link to="/register" className="text-indigo-600 hover:text-indigo-500 font-medium">Sign up</Link>
           </div>
         </div>
         </div>

@@ -1,6 +1,6 @@
 
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
@@ -20,16 +20,20 @@ const provider = new GoogleAuthProvider();
 
 auth.useDeviceLanguage();
 
-export const createUser = (inputs) => {
-    return createUserWithEmailAndPassword(auth,inputs.email,inputs.password);
+export const createUser = async (inputs) => {
+    return await createUserWithEmailAndPassword(auth,inputs.email,inputs.password);
 }
 
-export const signInUser = (inputs) => {
-    return signInWithEmailAndPassword(auth,inputs.email,inputs.password);
+export const signInUser = async (inputs) => {
+    return await signInWithEmailAndPassword(auth,inputs.email,inputs.password);
 }
 
-export const signInWithGoogle = () => {
-    return signInWithPopup(auth,provider);
+export const signInWithGoogle = async () => {
+    return await signInWithPopup(auth,provider);
+}
+
+export const signOutUser = async () => {
+    return await signOut(auth);
 }
 
 

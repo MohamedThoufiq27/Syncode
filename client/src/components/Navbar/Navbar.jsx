@@ -6,6 +6,7 @@ import {  Link } from 'react-router-dom';
 import { isAuth } from '../Auth/service/auth';
 import { useEffect, useState } from 'react';
 import { getUserDetailApi } from '../Auth/service/firebaseLookUpApi';
+import { signOutUser } from '../Auth/service/firebaseConfig';
 
 const Navbar = ({roomid,setRoomId,IsClicked,setIsClicked}) => {
     const [user,setUser]=useState({name:''});
@@ -22,9 +23,16 @@ const Navbar = ({roomid,setRoomId,IsClicked,setIsClicked}) => {
         console.log(user.name);
     },[])
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         localStorage.removeItem('idToken');
+        try{
+            await signOutUser();
+            console.log("user Signed out successfully");
+        }catch(err){
+            console.log(err);
+        }
         setUser({name:''});
+
     }
 
   return (
