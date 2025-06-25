@@ -1,7 +1,7 @@
 import axios from "axios"
 
 
-const API_KEY = 'AIzaSyCwA9pl2HuTtMduFSKo2TOGw0nXzAL4Ebo';
+const API_KEY = import.meta.env.VITE_FIREBASE_API_KEY;
 
 axios.defaults.baseURL=`https://identitytoolkit.googleapis.com/v1`
 

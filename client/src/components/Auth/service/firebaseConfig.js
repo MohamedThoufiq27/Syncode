@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, si
 import { GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCwA9pl2HuTtMduFSKo2TOGw0nXzAL4Ebo",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "syncode-72b58.firebaseapp.com",
   projectId: "syncode-72b58",
   storageBucket: "syncode-72b58.firebasestorage.app",
