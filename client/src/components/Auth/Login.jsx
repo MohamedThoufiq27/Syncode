@@ -1,12 +1,10 @@
 import { useState } from 'react'
-// import { loginApi } from './service/firebaseLogin';
-import { storeUserData } from './service/storage';
-import { isAuth } from './service/auth';
 import {  Link,Navigate } from 'react-router-dom';
-import { signInUser, signInWithGoogle } from './service/firebaseConfig';
+import { passwordReset, signInUser, signInWithGoogle } from './service/firebaseApi';
 
 
-const Login = () => {
+const Login = ({roomid}) => {
+  
   const initialErrorState = {
       email:{required:false},
       password:{required:false},
@@ -15,6 +13,8 @@ const Login = () => {
   const [errors,setErrors] =  useState(initialErrorState);
   const [loading,setLoading] = useState(false);
   const [redirectToEditor,setredirectToEditor] = useState(false);
+  
+  // const [redirectToPasswordReset,setRedirectToPasswordReset] = useState(false);
 
   const [inputs,setInputs] = useState({
       email:"",
@@ -39,7 +39,7 @@ const Login = () => {
       setLoading(true);
       signInUser(inputs).then((res)=>{
         console.log(res);
-        storeUserData(res._tokenResponse.idToken);
+        setredirectToEditor(true);
       }).catch((err)=>{
         console.log(err);
         if(String(err.message).includes('(auth/invalid-credential)')){
@@ -60,7 +60,6 @@ const Login = () => {
   const handleGoogleLogin = async () =>{
     signInWithGoogle().then((res)=>{
       console.log();
-      storeUserData(res.user.accessToken);
       if(res.user){
         setredirectToEditor(true);
       }
@@ -70,17 +69,35 @@ const Login = () => {
     // storeUserData(res.credential);
   }
  
-  
-  
-
-
+  const handlePasswordReset = ()=>{
+    if(inputs.email==""){
+      setErrors({...errors,email:{required:true}});
+    }
+    else{
+        passwordReset(inputs.email).then(()=>{
+            console.log('Password reset email sent successfully');
+            alert('Password reset email sent successfully. Please check your inbox.');
+            // setRedirectToPasswordReset(true);
+        }).catch((err)=>{
+            console.log(err);
+        if(String(err.message).includes('auth/user-not-found')){
+            setErrors({...errors,custom_error:'User not found'});
+        } else {
+            setErrors({...errors,custom_error:'Error sending password reset email'});
+        }
+      });
+    }
+  }
   
   const handleInput = (e)=>{
     setInputs({...inputs,[e.target.name]:e.target.value})
   }
 
-  if(redirectToEditor || isAuth()){
-    return <Navigate to='/editor' />
+  if(redirectToEditor){
+    if(roomid){
+      return <Navigate to={`/editor/${roomid}`} />
+    }
+      return <Navigate to={'/'} />
   }
 
   return (
@@ -122,12 +139,8 @@ const Login = () => {
 
             {errors.custom_error ? <span className='text-red-500 text-sm'>{errors.custom_error}</span>:null}
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center">
-                <input  type="checkbox" className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"/>
-                <span className="ml-2 text-sm text-gray-600">Remember me</span>
-              </label>
-              <a href="#" className="text-sm text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+            <div className="flex items-center justify-end">
+              {!errors.email.required && inputs.email && <Link to="/resetpassword" onClick={handlePasswordReset} className="text-sm text-indigo-600 hover:text-indigo-500">Forgot password?</Link>}
             </div>
 
             <button onClick={handleSubmit} className="w-full bg-indigo-600 disabled:cursor-none hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors" disabled={loading}>

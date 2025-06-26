@@ -1,6 +1,6 @@
 
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup, signOut, sendPasswordResetEmail,confirmPasswordReset} from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
@@ -18,11 +18,15 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
+
+
 auth.useDeviceLanguage();
 
 export const createUser = async (inputs) => {
-    return await createUserWithEmailAndPassword(auth,inputs.email,inputs.password);
+     return await createUserWithEmailAndPassword(auth,inputs.email,inputs.password);
 }
+
+
 
 export const signInUser = async (inputs) => {
     return await signInWithEmailAndPassword(auth,inputs.email,inputs.password);
@@ -35,6 +39,18 @@ export const signInWithGoogle = async () => {
 export const signOutUser = async () => {
     return await signOut(auth);
 }
+
+export const passwordReset = async (email) => {
+    return await sendPasswordResetEmail(auth,email);
+}
+
+export const confirmUserPasswordReset = async (code, newPassword) => {
+    return await confirmPasswordReset(auth,code, newPassword);
+}
+
+
+
+
 
 
 

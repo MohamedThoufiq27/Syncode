@@ -4,6 +4,7 @@ import Navbar from '../Navbar/Navbar'
 
 
 
+
 const Home = ({roomid,setRoomId,IsClicked,setIsClicked}) => {
   
   return (
@@ -12,7 +13,7 @@ const Home = ({roomid,setRoomId,IsClicked,setIsClicked}) => {
           <Navbar roomid={roomid} setRoomId={setRoomId} IsClicked={IsClicked} setIsClicked={setIsClicked} />
         </div>
         {roomid ? 
-          <Navigate to='/editor' />
+          <Navigate to={`/editor/${roomid}`} />
         :
         <h1 className='col-span-5 row-span-4 row-start-2 mt-40 dark:text-white text-zinc-950 text-center text-2xl'>Please enter a room ID to start editing.</h1> 
           }

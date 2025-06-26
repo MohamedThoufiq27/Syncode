@@ -3,6 +3,7 @@ import {  useState } from 'react'
 import CodeEditor from './CodeEditor'
 import { Navigate } from 'react-router-dom'
 import Navbar from '../Navbar/Navbar'
+import { getRoomId } from '../Navbar/storeRoomId'
 
 const EditorPage = ({roomid,setRoomId,IsClicked,setIsClicked}) => {
     const [language,setLanguage] = useState('javascript');
@@ -10,13 +11,25 @@ const EditorPage = ({roomid,setRoomId,IsClicked,setIsClicked}) => {
     const [Loading,setLoading] = useState(false);
     const [runTime,setRunTime] = useState('');
     const [input,setInput] = useState('');
+
+    if(!getRoomId()){
+      return <Navigate to={'/'}/>
+    }
+
   return (
     <main className=' grid grid-cols-5 grid-rows-7 gap-0.5 sm:gap-1 md:gap-2 lg:gap-4 dark:bg-gray-900 bg-white w-screen h-screen'>
           <div className='col-span-5 col-start-1 row-start-1'>
-            <Navbar roomid={roomid} setRoomId={setRoomId} IsClicked={IsClicked} setIsClicked={setIsClicked} />
+            <Navbar 
+            roomid={roomid} 
+            setRoomId={setRoomId} 
+            IsClicked={IsClicked} 
+            setIsClicked={setIsClicked} 
+            
+            />
           </div>
           {console.log(roomid)}
-          {roomid ? 
+          
+          {roomid && 
             // <div className='p-1 mx-1.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500'>
             <div className='mb-3 ml-3 col-span-3 row-span-6 col-start-1 row-start-2 overflow-hidden text-sm rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500'>
               <CodeEditor 
@@ -30,11 +43,11 @@ const EditorPage = ({roomid,setRoomId,IsClicked,setIsClicked}) => {
                 input={input}
               />
             </div> 
-            :
+           
             // <div className='flex justify-center items-center'>
             
             
-            <Navigate to="/" />
+            // <Navigate to="/" />
           }
 
           {roomid &&

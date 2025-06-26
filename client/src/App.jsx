@@ -5,12 +5,17 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import { useEffect, useState } from 'react';
 import { getRoomId } from './components/Navbar/storeRoomId';
+import PasswordReset from './components/Auth/PasswordReset';
+
 
 
 
 const App = () => {
   const [roomid,setRoomId]= useState(null);
   const [IsClicked,setIsClicked]= useState(false);
+  
+
+  
   
   useEffect(()=>{
     const id=getRoomId();
@@ -23,10 +28,25 @@ const App = () => {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path='/register' element={<Register/>}  />
-          <Route path='/login' element={<Login /> } />
-          <Route path='/' element={<Home roomid={roomid} setRoomId={setRoomId} IsClicked={IsClicked} setIsClicked={setIsClicked} />} />
-          <Route path='/editor' element={<EditorPage roomid={roomid} setRoomId={setRoomId} IsClicked={IsClicked} setIsClicked={setIsClicked} />} />
+          <Route path='/register' element={<Register roomid={roomid}/>}  />
+          <Route path='/login' element={<Login roomid={roomid}/> } />
+          <Route path='/resetpassword' element={<PasswordReset />} />
+          <Route path='/' element={
+            <Home
+                roomid={roomid} 
+                setRoomId={setRoomId} 
+                IsClicked={IsClicked} 
+                setIsClicked={setIsClicked} 
+                
+              />} 
+            />
+          <Route path='/editor/:roomid' element={
+            <EditorPage 
+                roomid={roomid} 
+                setRoomId={setRoomId} 
+                IsClicked={IsClicked} 
+                setIsClicked={setIsClicked} 
+                  />} />
         </Routes>
         
       </BrowserRouter>

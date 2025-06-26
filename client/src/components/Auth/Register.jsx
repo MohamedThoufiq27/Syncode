@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
-import { registerApi } from './service/firebaseRegisterApi';
-import { storeUserData } from './service/storage';
-import { isAuth } from './service/auth';
-import { Navigate } from 'react-router-dom';
+import { useState } from 'react'
+import { Link, Navigate } from 'react-router-dom';
+import { createUser } from './service/firebaseApi';
+import { updateProfile } from 'firebase/auth';
 
 
 
-const Register = () => {
+const Register = ({roomid}) => {
   const initialErrorState = {
     email:{required:false},
     password:{required:false},
@@ -14,12 +13,12 @@ const Register = () => {
     custom_error:null
   }
   const [errors,setErrors] =  useState(initialErrorState);
-
+  const [redirectToEditor,setredirectToEditor] = useState(false);
   const [loading,setLoading] = useState(false);
   
   
 
-  const handleSubmit = (e)=>{
+  const handleSubmit = async (e)=>{
     e.preventDefault();
     let errors = initialErrorState;
     let hasError = false;
@@ -38,18 +37,31 @@ const Register = () => {
 
     if(!hasError){
       setLoading(true);
-      registerApi(inputs).then((res)=>{
-        storeUserData(res.data.idToken)
-      }).catch((err)=>{
+      try{
+        // Step 1: Create user
+        const res = await createUser(inputs);
+        const user = res.user;
+
+        // Step 2: Update profile with display name
+        await updateProfile(user, {
+          displayName: inputs.name
+        });
+        console.log("User registered with display name:", user.displayName);
+        setredirectToEditor(true);
+      }catch(err){
         console.log(err);
-        setErrors({...errors,custom_error:err.response.data.error.message})
-      }).finally(()=>{
+        if(String(err.message).includes('(auth/invalid-credential)')){
+          setErrors({...errors,custom_error:'Invalid Credentials'});
+        }
+        if(String(err.message).includes('already exists')){
+          setErrors({...errors,custom_error:'Account Already Exists Please Login'});
+        }
+      }finally{
         setLoading(false);
-      });
+      }
 
-      
     }
-
+      
      setErrors({...errors});
   }
 
@@ -63,9 +75,13 @@ const Register = () => {
     setInputs({...inputs,[e.target.name]:e.target.value})
   }
 
-  if(isAuth()){
-    return <Navigate to='/editor'/>
+  if(redirectToEditor){
+    if(roomid){
+      return <Navigate to={`/editor/${roomid}`}/>
+    }
+    else return <Navigate to="/"/>;
   }
+  
 
   return (
     <div className='flex justify-center items-center dark:bg-gray-900 bg-white w-screen h-screen'>
@@ -124,12 +140,7 @@ const Register = () => {
              
             {errors.custom_error ? <span className='text-red-500 text-sm'>{errors.custom_error}</span>:null}
             
-            <div>
-              <p>Already have account ? Please
-                <a href='/login'>Log In</a>
-              </p>
-            </div>
-
+            
             
 
             <button onClick={handleSubmit} className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-600 text-white font-medium py-2.5 rounded-lg transition-colors" disabled={loading}>
@@ -143,10 +154,10 @@ const Register = () => {
             
           </form>
 
-          {/* <div className="mt-6 text-center text-sm text-gray-600">
-            Don't have an account? 
-            <a href="/register" className="text-indigo-600 hover:text-indigo-500 font-medium">Sign up</a>
-          </div> */}
+          <div className="mt-6 text-center text-sm text-gray-600">
+            Already have an account? 
+            <Link to="/login" className="text-indigo-600 hover:text-indigo-500 font-medium">Sign In</Link>
+          </div>
         </div>
         </div>
       </div> 
