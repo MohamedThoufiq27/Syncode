@@ -1,6 +1,6 @@
 
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup, signOut, sendPasswordResetEmail,confirmPasswordReset} from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup, signOut, sendPasswordResetEmail,confirmPasswordReset, onAuthStateChanged} from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
@@ -47,6 +47,15 @@ export const passwordReset = async (email) => {
 export const confirmUserPasswordReset = async (code, newPassword) => {
     return await confirmPasswordReset(auth,code, newPassword);
 }
+
+export const waitForAuth = () => {
+  return new Promise((resolve) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      resolve(!!user); // true if user exists
+      unsubscribe();   // only run once
+    });
+  });
+};
 
 
 

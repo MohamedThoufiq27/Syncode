@@ -1,12 +1,21 @@
+import { toast } from "react-toastify";
+import { useSharedData } from "../../hooks/useSharedData";
+import socket from "../../socket";
 
 
-export const JoinButton = ({roomid,setRoomId,setIsClicked}) => {
+export const JoinButton = () => {
+  const {roomid,setRoomId,setIsClicked,isAuth} = useSharedData();
   const handleJoin = ()=>{
-    setIsClicked(true);
+    if(!isAuth){
+      toast.warning("Please Login Before Join");
+    }
+    else setIsClicked(true);
   }
   const handleLeave = () => {
     localStorage.removeItem('roomid');
     setRoomId(null);
+    socket.emit('leave-room');
+    toast.info("You have left the room");
   }
   
     

@@ -1,33 +1,64 @@
 
-import {  useState } from 'react'
+import {  useEffect, useState } from 'react'
 import CodeEditor from './CodeEditor'
 import { Navigate } from 'react-router-dom'
 import Navbar from '../Navbar/Navbar'
 import { getRoomId } from '../Navbar/storeRoomId'
+import { toast } from 'react-toastify'
+import Sidebar from '../Sidebar/Sidebar'
+import { useSharedData } from '../../hooks/useSharedData'
+import ChatBox from '../Chat/ChatBox'
+import Group from '../Group/Group'
+import Filesystem from '../FileSystem/FileSystem'
+import VideoChat from '../VideoChat/VideoChat'
 
-const EditorPage = ({roomid,setRoomId,IsClicked,setIsClicked}) => {
+const EditorPage = () => {
+    const {roomid,sidebarOpen,isAuth} = useSharedData();
     const [language,setLanguage] = useState('javascript');
     const [output,setOutput] = useState('');
     const [Loading,setLoading] = useState(false);
     const [runTime,setRunTime] = useState('');
     const [input,setInput] = useState('');
+    
 
-    if(!getRoomId()){
+    useEffect(()=>{
+      if(!getRoomId()) return ;
+      toast.success(`you joined the room Successfully !`)
+    },[])
+
+  
+    if(!getRoomId() || !isAuth){
       return <Navigate to={'/'}/>
     }
-
   return (
+
+    <div className='flex'>
+      <Sidebar />
+      {sidebarOpen.isChat && 
+        <div className='w-[20vw] h-screen   bg-fuchsia-300'>
+           <ChatBox/>
+        </div>
+      }
+      {sidebarOpen.isGroup && 
+        <div className='w-[17vw] h-screen  bg-fuchsia-300'>
+           <Group/>
+        </div>
+      }
+      {sidebarOpen.isFileSystem && 
+        <div className='w-[17vw] h-screen   bg-fuchsia-300'>
+           <Filesystem />
+        </div>
+      }
+      {sidebarOpen.isVideo && 
+        <div className='w-[17vw] h-screen  bg-fuchsia-300'>
+           <VideoChat />
+        </div>
+      }
     <main className=' grid grid-cols-5 grid-rows-7 gap-0.5 sm:gap-1 md:gap-2 lg:gap-4 dark:bg-gray-900 bg-white w-screen h-screen'>
           <div className='col-span-5 col-start-1 row-start-1'>
-            <Navbar 
-            roomid={roomid} 
-            setRoomId={setRoomId} 
-            IsClicked={IsClicked} 
-            setIsClicked={setIsClicked} 
-            
-            />
+            <Navbar  />
           </div>
-          {console.log(roomid)}
+
           
           {roomid && 
             // <div className='p-1 mx-1.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500'>
@@ -71,11 +102,8 @@ const EditorPage = ({roomid,setRoomId,IsClicked,setIsClicked}) => {
             </div>          
           }
 
-          
-          
-          
-  
     </main>
+    </div>
   )
 }
 

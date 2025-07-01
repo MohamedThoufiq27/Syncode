@@ -1,10 +1,15 @@
-import { useState } from 'react'
+import {  useState } from 'react'
 import {  Link,Navigate } from 'react-router-dom';
 import { passwordReset, signInUser, signInWithGoogle } from './service/firebaseApi';
+import { toast } from 'react-toastify';
+import { useSharedData } from '../../hooks/useSharedData';
 
 
-const Login = ({roomid}) => {
-  
+
+
+const Login =  () => {
+  const {roomid,isAuth} = useSharedData();
+    
   const initialErrorState = {
       email:{required:false},
       password:{required:false},
@@ -40,6 +45,7 @@ const Login = ({roomid}) => {
       signInUser(inputs).then((res)=>{
         console.log(res);
         setredirectToEditor(true);
+        toast.success("Logged in Successfully !")
       }).catch((err)=>{
         console.log(err);
         if(String(err.message).includes('(auth/invalid-credential)')){
@@ -93,12 +99,13 @@ const Login = ({roomid}) => {
     setInputs({...inputs,[e.target.name]:e.target.value})
   }
 
-  if(redirectToEditor){
+  if(redirectToEditor || isAuth){
     if(roomid){
       return <Navigate to={`/editor/${roomid}`} />
     }
       return <Navigate to={'/'} />
   }
+  
 
   return (
       <div className='flex justify-center items-center dark:bg-gray-900 bg-white w-screen h-screen'>
@@ -151,7 +158,6 @@ const Login = ({roomid}) => {
               'Sign In'}
             </button>
           </form>
-
             {/* <div className='pt-2.5'>
              <GoogleLogin  onSuccess={handleGoogleLogin} onError={handleGoogleError} theme='filled_blue' shape='rectangular' />   
             </div> */}

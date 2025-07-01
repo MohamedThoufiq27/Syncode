@@ -1,11 +1,24 @@
-import { useState } from 'react'
-import { Link, Navigate } from 'react-router-dom';
-import { createUser } from './service/firebaseApi';
+import { useEffect, useState } from 'react'
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { createUser, waitForAuth } from './service/firebaseApi';
 import { updateProfile } from 'firebase/auth';
+import { useSharedData } from '../../hooks/useSharedData';
 
 
 
-const Register = ({roomid}) => {
+const Register = () => {
+  const {roomid} = useSharedData();
+  const navigate = useNavigate();
+    useEffect(() => {
+    waitForAuth().then((isLoggedIn) => {
+      if(isLoggedIn && !!roomid){
+        navigate(`/editor/${roomid}`);
+      }
+      if (isLoggedIn) {
+        navigate('/');
+      }
+    });
+  }, []);
   const initialErrorState = {
     email:{required:false},
     password:{required:false},

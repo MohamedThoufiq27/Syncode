@@ -5,6 +5,7 @@ import {javascript} from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
 import { java } from '@codemirror/lang-java';
 import { cpp } from '@codemirror/lang-cpp';
+import { VscRunAll } from "react-icons/vsc";
 
 import {  useEffect, useState } from "react";
 import socket from '../../socket';
@@ -12,6 +13,8 @@ import socket from '../../socket';
 import { getCode, saveCode ,runCode } from '../../api';
 import Dropdown from './Dropdown';
 import { autocompletion } from '@codemirror/autocomplete';
+import { toast } from 'react-toastify';
+
 
 
 
@@ -48,7 +51,6 @@ public class Main {
 
 
 const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime,Loading,input}) =>{
-    
     const [code,setCode]=useState(defaultCodeSnippets[language]);
     const [editorTheme,setEditorTheme] = useState(oneDark);
     
@@ -86,6 +88,7 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
         setOutput( stdout || stderr || message || 'No output');
         setRunTime(executionTime);
         setLoading(false);
+        toast.success(" Executed Successfully !")
     }
     
     const getLanguage = (language)=>{
@@ -106,8 +109,6 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
             return;
         }
         
-        socket.emit('join-room',roomid);
-
         const load = async ()=>{
             const saved = await getCode(roomid);
             if(saved.code && Object.values(defaultCodeSnippets).includes(saved.code)) setCode(defaultCodeSnippets[language]);
@@ -132,7 +133,7 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
 
         return ()=>{
             socket.off('code-update');
-            socket.off('language-change');
+            socket.off('language-update');
         };
     
     },[roomid,language]);
@@ -165,7 +166,8 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
                         <button onClick={()=>handleRun({code,language,input})} className="relative inline-flex items-center justify-center  overflow-hidden text-sm font-medium text-gray-900 rounded-lg  dark:text-white hover:ring-4 hover:outline-none hover:ring-purple-200 dark:hover:ring-purple-800">
                             <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md ">
                             {Loading ?<div className="w-6 h-6 rounded-full animate-spin
-                    border-2 border-solid border-blue-500 border-t-transparent"></div> : 'Run Code'}
+                    border-2 border-solid border-blue-500 border-t-transparent"></div> : 
+                            <div className='px-2 text-2xl' ><VscRunAll /></div>}
                             </span>
                         </button>
                     </div>
