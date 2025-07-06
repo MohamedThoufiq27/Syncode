@@ -38,6 +38,9 @@ module.exports = function(io){
                 io.to(room).emit('members-update', rooms[room]);
             }
         })
+        socket.on("send-message", (data) => {
+            socket.to(data.roomid).emit("receive-message", data);
+        });
         socket.on('disconnect',()=>{
             for (let room in rooms) {
                 rooms[room] = rooms[room].filter((user) => user.id !== socket.id);

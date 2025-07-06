@@ -14,44 +14,19 @@ import { getCode, saveCode ,runCode } from '../../api';
 import Dropdown from './Dropdown';
 import { autocompletion } from '@codemirror/autocomplete';
 import { toast } from 'react-toastify';
+import { useSharedData } from '../../hooks/useSharedData';
+import { IoClose } from "react-icons/io5";
 
 
 
 
-const defaultCodeSnippets = {
-  javascript: `// JavaScript Example
-function greet(name) {
-  return "Hello, " + name;
-}
-console.log(greet("World"));`,
 
-  python: `# Python Example
-def greet(name):
-    return "Hello, " + name
-
-print(greet("World"))`,
-
-  cpp: `// C++ Example
-#include <iostream>
-using namespace std;
-
-int main() {
-    cout << "Hello, World!";
-    return 0;
-}`,
-
-  java: `// Java Example
-public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}`
-};
 
 
 
 const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime,Loading,input}) =>{
-    const [code,setCode]=useState(defaultCodeSnippets[language]);
+    const {code,setCode,defaultCodeSnippets,openFiles,setActiveFile,setOpenFiles,activeFile} = useSharedData();
+    
     const [editorTheme,setEditorTheme] = useState(oneDark);
     
 
@@ -155,23 +130,53 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
         await saveCode({roomid,code,language});
     };
 
+    
+    console.log(openFiles)
     return (
         <div className='p-1.5 m-1.5'>
-            <div className='mb-1 flex justify-between'>
-                    <div className='mr-2'>
-                        <Dropdown language={language} onLanguageChange={handleLanguageChange}  />
-                    </div>
+            
+                <div className='flex justify-end items-center'>
+                        <div className='flex-1'>
+                            <div className="tab-bar rounded-xl flex cursor-pointer">
+                                {openFiles.map(file => (
+                                    <div
+                                    key={file.path}
+                                    className={`tab ${file.path === activeFile?.path ? "active" : ""} flex justify-center items-center text-center bg-gray-900 text-md text-white border-0 mr-2 hover:bg-gray-800 rounded-lg p-1.5`}
+                                    onClick={() => {
+                                        setActiveFile(file);
+                                        setCode(file.content);
+                                    }}
+                                    >
+                                    {file.name}
 
-                    <div>
-                        <button onClick={()=>handleRun({code,language,input})} className="relative inline-flex items-center justify-center  overflow-hidden text-sm font-medium text-gray-900 rounded-lg  dark:text-white hover:ring-4 hover:outline-none hover:ring-purple-200 dark:hover:ring-purple-800">
-                            <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md ">
-                            {Loading ?<div className="w-6 h-6 rounded-full animate-spin
-                    border-2 border-solid border-blue-500 border-t-transparent"></div> : 
-                            <div className='px-2 text-2xl' ><VscRunAll /></div>}
-                            </span>
-                        </button>
-                    </div>
-            </div>
+                                    <button className='mx-1 p-0.5 cursor-pointer hover:bg-zinc-400 rounded-md' onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenFiles(prev => prev.filter(f => f.path !== file.path));
+                                        if (activeFile?.path === file.path) {
+                                        setActiveFile(null);
+                                        setCode(""); // Clear editor
+                                        }
+                                    }}><IoClose className='size-4'/></button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className='mr-2 pb-1'>
+                            <Dropdown language={language} onLanguageChange={handleLanguageChange}  />
+                        </div>
+
+                        <div>
+                            <button onClick={()=>handleRun({code,language,input})} className="relative inline-flex items-center justify-center  overflow-hidden text-sm font-medium text-gray-900 rounded-lg  dark:text-white hover:ring-4 hover:outline-none hover:ring-purple-200 dark:hover:ring-purple-800">
+                                <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md ">
+                                {Loading ?<div className="w-6 h-6 rounded-full animate-spin
+                        border-2 border-solid border-blue-500 border-t-transparent"></div> : 
+                                <div className='px-2 text-2xl' ><VscRunAll /></div>}
+                                </span>
+                            </button>
+                        </div>
+                </div>
+           
             
 
             <div className=' overflow-auto no-scrollbar scroll-smooth rounded-xl ' style={{height:`${editorHeight}px`}}>

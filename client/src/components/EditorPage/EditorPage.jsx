@@ -9,12 +9,13 @@ import Sidebar from '../Sidebar/Sidebar'
 import { useSharedData } from '../../hooks/useSharedData'
 import ChatBox from '../Chat/ChatBox'
 import Group from '../Group/Group'
-import Filesystem from '../FileSystem/FileSystem'
 import VideoChat from '../VideoChat/VideoChat'
+import FileSystem from '../FileSystem/FileSytem'
+
+
 
 const EditorPage = () => {
-    const {roomid,sidebarOpen,isAuth} = useSharedData();
-    const [language,setLanguage] = useState('javascript');
+    const {roomid,sidebarOpen,isAuth,language,setLanguage} = useSharedData();
     const [output,setOutput] = useState('');
     const [Loading,setLoading] = useState(false);
     const [runTime,setRunTime] = useState('');
@@ -35,23 +36,33 @@ const EditorPage = () => {
     <div className='flex'>
       <Sidebar />
       {sidebarOpen.isChat && 
-        <div className='w-[20vw] h-screen   bg-fuchsia-300'>
-           <ChatBox/>
+        <div className='w-[25vw] h-screen p-4 bg-gray-900'>
+          <div className='w-[23vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl'>
+            <ChatBox/>
+          </div>
         </div>
       }
       {sidebarOpen.isGroup && 
-        <div className='w-[17vw] h-screen  bg-fuchsia-300'>
-           <Group/>
+        
+        <div className='w-[17vw] h-screen p-4 bg-gray-900'>
+          <div className='w-[15vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl'>
+            <Group/>
+          </div>
         </div>
+        
       }
-      {sidebarOpen.isFileSystem && 
-        <div className='w-[17vw] h-screen   bg-fuchsia-300'>
-           <Filesystem />
+      {sidebarOpen.isFileSystem &&
+        <div className='w-[17vw] h-screen p-4 bg-gray-900'> 
+          <div className='w-[15vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl overflow-auto'>
+            <FileSystem />
+          </div>
         </div>
       }
       {sidebarOpen.isVideo && 
-        <div className='w-[17vw] h-screen  bg-fuchsia-300'>
-           <VideoChat />
+        <div className='w-[17vw] h-screen p-4 bg-gray-900'>
+          <div className='w-[15vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl'>
+            <VideoChat />
+          </div>
         </div>
       }
     <main className=' grid grid-cols-5 grid-rows-7 gap-0.5 sm:gap-1 md:gap-2 lg:gap-4 dark:bg-gray-900 bg-white w-screen h-screen'>

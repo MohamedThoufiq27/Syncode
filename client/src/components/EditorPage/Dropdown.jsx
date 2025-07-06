@@ -3,6 +3,7 @@ import { SiJavascript, SiPython, SiCplusplus } from 'react-icons/si';
 import {FaJava} from 'react-icons/fa6';
 import { FaCaretRight } from "react-icons/fa6";
 import { toast } from 'react-toastify';
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
 
 
 
@@ -33,12 +34,12 @@ const Dropdown = ({language,onLanguageChange}) => {
             {/* {selected.label} */}
           </span>
           {/* for dropdown arrow svg */}
-          <span className='ml-1'><FaCaretRight /></span>
+          <span className='ml-1'><ChevronDownIcon className='size-3' /></span>
         </button>
       </div>
       {open && (
-        <div onMouseLeave={()=>setOpen(false)} className={`absolute lg:left-25 lg:-top-4 mt-2 w-fit rounded-md shadow-lg bg-gray-900 z-20`}>
-          <div className="p-1 lg:flex">
+        <div onMouseLeave={()=>setOpen(false)} className={`absolute mt-2 w-fit rounded-md shadow-lg bg-gray-900 z-20`}>
+          <div className="p-1">
             {langArray.map((lang) => (
               <button
                 key={lang.id}

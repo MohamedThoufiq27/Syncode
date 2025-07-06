@@ -5,7 +5,8 @@ import { useSharedData } from '../../hooks/useSharedData';
 import { MdOutlineVideoCall } from "react-icons/md";
 
 const Sidebar = () => {
-  const {setSidebarOpen,sidebarOpen} = useSharedData();
+
+  const {setSidebarOpen,sidebarOpen,hasUnread,setIsChatOpen,setHasUnread} = useSharedData();
   const handleOpenSidebar = (name) => {
     setSidebarOpen({
       ...sidebarOpen,
@@ -15,7 +16,10 @@ const Sidebar = () => {
       isVideo:(!sidebarOpen.isVideo ? name==="isVideo":false)
     })
   }
-
+  const openChat = () => {
+    setIsChatOpen(true);
+    setHasUnread(false);
+  };
   return (
     <div className='w-15 h-screen bg-gray-900'>
 
@@ -32,8 +36,14 @@ const Sidebar = () => {
         </div>
 
         <div className='my-6 mx-2.5'>
-          <button  onClick={()=>handleOpenSidebar("isChat")}  className=''>
+          <button  onClick={()=>{
+            handleOpenSidebar("isChat");
+            openChat();
+            }}  className='relative'>
             <IoChatboxEllipsesOutline className='size-9 text-white' />
+            {hasUnread && (
+              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full z-10" />
+            )}
           </button>
         </div>
 
