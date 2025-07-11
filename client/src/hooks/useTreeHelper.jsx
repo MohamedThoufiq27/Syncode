@@ -102,7 +102,29 @@ const useTreeHelper = () => {
             return updatedChild;
         });
     }
-    return {insertNode,deleteNode,updateNode}
+
+    function updateFileContentInTree(tree, path, newContent) {
+        if (!tree) return tree;
+
+        const updateNode = (node) => {
+            if (node.path === path && !node.isfolder) {
+            return { ...node, content: newContent };
+            }
+
+            if (node.isfolder && node.folders) {
+            return {
+                ...node,
+                folders: node.folders.map(updateNode),
+            };
+            }
+
+            return node;
+        };
+
+        return updateNode(tree);
+    }
+
+    return {insertNode,deleteNode,updateNode,updateFileContentInTree}
 }
 
 export default useTreeHelper

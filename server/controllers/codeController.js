@@ -2,16 +2,16 @@ const Code = require('../models/model');
 
 
 exports.saveCode=async (req,res)=>{
-    const {roomid,code,language}=req.body;
+    const {roomid,language,tree}=req.body;
     try{
         const existing = await Code.findOne({roomid:roomid});
         if(existing){
-            existing.code=code;
             existing.language=language;
+            existing.tree=tree;
             await existing.save();
         }
         else{
-            await Code.create({roomid,code,language});
+            await Code.create({roomid,language,tree});
         }
         res.status(200).json({'message':'Successfully saved'});
     }

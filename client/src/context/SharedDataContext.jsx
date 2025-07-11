@@ -4,6 +4,9 @@ import { SharedDataContext } from './SharedDataContextContext.jsx';
 import socket from '../socket.js';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { toast } from 'react-toastify';
+import {  decompressFromBase64 } from 'lz-string';
+import {useParams} from 'react-router-dom'
+import { getRoomId } from '../components/Navbar/storeRoomId.js';
 
 const defaultCodeSnippets = {
   javascript: `// JavaScript Example
@@ -39,7 +42,10 @@ public class Main {
 
 export const SharedDataProvider = ({ children }) => {
     const auth = getAuth();
-    const [roomid, setRoomId] = useState(null);
+    const {roomid:UrlRoomid} = useParams();
+    const [roomid, setRoomId] = useState(()=>{
+        return UrlRoomid || getRoomId();
+    });
     const [IsClicked, setIsClicked] = useState(false);
     const [username, setUserName] = useState(null);
     const [members,setMembers] = useState([]);
@@ -55,6 +61,7 @@ export const SharedDataProvider = ({ children }) => {
     const [hasUnread, setHasUnread] = useState(false);
     const [openFiles, setOpenFiles] = useState([]);
     const [activeFile, setActiveFile] = useState(null);
+    const [GeneratedCode,setGeneratedCode] = useState([]);
     
     
     const [selectedFile,setSelectedFile] = useState({
@@ -66,9 +73,31 @@ export const SharedDataProvider = ({ children }) => {
         isChat: false,
         isGroup: false,
         isFileSystem: false,
-        isVideo:false
+        isAskAi:false
     });
 
+    
+   
+
+    //sync file system
+    useEffect(()=>{
+        socket.on("tree-update",(compressedTree)=>{
+            if (typeof compressedTree !== "string") {
+                console.error("🚨 Expected string but got:", compressedTree);
+                return;
+            }
+            const decompressed = JSON.parse(decompressFromBase64(compressedTree));
+            console.log("📥 Received tree-update:", decompressed);
+            setTree(decompressed);
+        });
+
+    
+        return ()=>{
+            socket.off("tree-update");
+        };
+    },[]);
+   
+    
     // to get room members when joined
     useEffect(() => {
         socket.on('members-update', (updatedMembers) => {
@@ -106,9 +135,10 @@ export const SharedDataProvider = ({ children }) => {
     //for auth the user when logged in
     useEffect(()=>{
         const unsubscribe = onAuthStateChanged(auth,(user)=>{
-            if(user){
+            if(user!=null){
                 setUserName(user.displayName);
                 setIsAuth(true);
+                toast.success(`Logged in as ${user.displayName}`)
             }else{
                 setUserName(null);
             }
@@ -179,7 +209,9 @@ export const SharedDataProvider = ({ children }) => {
         openFiles,
         setActiveFile,
         setOpenFiles,
-        activeFile
+        activeFile,
+        GeneratedCode,
+        setGeneratedCode
     };
 
     return (

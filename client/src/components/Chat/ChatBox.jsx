@@ -33,6 +33,15 @@ const ChatBox = () => {
     setMessage("");
   };
   
+  const now = new Date();
+
+  const time12hr = now.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+
+  
 
   return (
     <div className="h-full rounded-2xl flex flex-col">
@@ -43,8 +52,9 @@ const ChatBox = () => {
 
                   {msg.socketId === socketId ? 
                       <div className="flex items-center justify-end">
-                        <div className="bg-blue-500 text-white rounded-lg p-2 shadow-xl mr-2 max-w-sm">
+                        <div className="flex flex-col bg-blue-500 text-white rounded-lg p-2 shadow-xl mr-2 max-w-sm">
                           {msg.message}
+                          <span className="text-xs inline-flex justify-end text-zinc-600">{time12hr}</span>
                         </div>
                         <Avatar username={msg.username} senderId={msg.socketId} />
                       </div>
@@ -55,8 +65,9 @@ const ChatBox = () => {
                           <Avatar username={msg.username} senderId={msg.socketId} />
                           <div className="font-medium">{msg.username}</div>
                         </div>
-                        <div className="w-fit bg-white/20 backdrop-blur-3xl rounded-lg p-2 shadow-xl ring-black/5 max-w-sm">
+                        <div className="flex flex-col w-fit bg-white/20 backdrop-blur-3xl rounded-lg p-2 shadow-xl ring-black/5 max-w-sm">
                           {msg.message}
+                          <span className="text-xs inline-flex justify-start text-zinc-600">{time12hr}</span>
                         </div>
                       </>
                     )

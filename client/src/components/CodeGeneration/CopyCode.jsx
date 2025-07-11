@@ -2,16 +2,13 @@ import { useState } from 'react'
 import { IoCopy } from "react-icons/io5";
 import { TbCopyCheckFilled } from "react-icons/tb";
 import {toast} from 'react-toastify';
-import { useSharedData } from '../../hooks/useSharedData';
 
-const CopyToClipboard = () => {
-    const {roomid:textToCopy} = useSharedData();
+const CopyCode = ({textToCopy}) => {
     const [copy,setCopy] = useState(false);
     const handleCopy = async () => {
         try{
-            const url = `${window.location.origin}/editor/${textToCopy}`;
-            await navigator.clipboard.writeText(url);
-            toast.success("URL Copied !");
+            await navigator.clipboard.writeText(textToCopy);
+            toast.success("Code Copied !");
             setCopy(true);
             setTimeout(()=>{
                 setCopy(false);
@@ -19,12 +16,12 @@ const CopyToClipboard = () => {
             },1500);
         }
         catch(err){
-            console.error('Failed to Copy !',err);
+            console.error('Failed to Copy Code !',err);
         }
         
     }
   return (
-    <div onClick={handleCopy} className='pl-2 pr-1'>
+    <div onClick={handleCopy} className='p-0.5 inline-flex justify-end w-full'>
         { !copy ?
             <IoCopy className='h-5 w-5 dark:text-white text-black'/>
             :
@@ -37,4 +34,4 @@ const CopyToClipboard = () => {
   )
 }
 
-export default CopyToClipboard
+export default CopyCode

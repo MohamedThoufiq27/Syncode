@@ -15,7 +15,6 @@ module.exports = function(io){
             }
 
             socket.join(roomid);
-
             io.to(roomid).emit('members-update', rooms[roomid]);
             console.log(`${socket} connected to room ${roomid}`);
         });
@@ -24,13 +23,14 @@ module.exports = function(io){
             socket.to(socket.id).emit('Members-update', rooms[roomid] || []);
         });
 
-        socket.on('code-change',({roomid,code}) =>{
-            socket.to(roomid).emit('code-update',code);
+        socket.on("file-content-change", ({ roomid, filePath, content }) => {
+            socket.to(roomid).emit("file-content-update", { filePath, content });
         });
         
         socket.on('language-change',({roomid,language})=>{
             socket.to(roomid).emit('language-update',{language});
         });
+
         socket.on('leave-room',()=>{
             for (let room in rooms) {
                 rooms[room] = rooms[room].filter((user) => user.id !== socket.id);
@@ -38,9 +38,18 @@ module.exports = function(io){
                 io.to(room).emit('members-update', rooms[room]);
             }
         })
+
         socket.on("send-message", (data) => {
             socket.to(data.roomid).emit("receive-message", data);
         });
+
+        socket.on("tree-modified",(tree,roomid)=>{
+            console.log("📡 Server received tree-modified for room:", roomid);
+            socket.to(roomid).emit("tree-update",tree);
+        });
+
+        
+
         socket.on('disconnect',()=>{
             for (let room in rooms) {
                 rooms[room] = rooms[room].filter((user) => user.id !== socket.id);
@@ -49,5 +58,6 @@ module.exports = function(io){
             }
             console.log('user disconnected',socket.id);
         });
+
     });
 };

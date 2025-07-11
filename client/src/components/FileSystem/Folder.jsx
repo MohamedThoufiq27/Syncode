@@ -7,11 +7,13 @@ import {  useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence ,motion } from "framer-motion";
 import { useSharedData } from "../../hooks/useSharedData";
+import { getFileIcon } from "../../utils/getFileIcon";
+
 
 
 export function Folder({ folder, handleTreeSearch, handleDelete, handleUpdate ,handleRightClick ,contextTarget,actionToTrigger,setContextTarget,setActionToTrigger,setSelectedFile }) {
   const [isOpen, setIsOpen] = useState(false);
-  const {setCode,setActiveFile,setOpenFiles} = useSharedData();
+  const {setCode,setActiveFile,setOpenFiles,openFiles} = useSharedData();
   const isAddingFile = contextTarget === folder.path && actionToTrigger === "addFile";
   const isAddingFolder = contextTarget === folder.path && actionToTrigger === "addFolder";
   const isEditing = contextTarget === folder.path && actionToTrigger === "rename";
@@ -32,6 +34,7 @@ export function Folder({ folder, handleTreeSearch, handleDelete, handleUpdate ,h
       handleTreeSearch(folder.path, e.target.value, isAddingFolder);
       resetContext();
     }
+    
   };
 
   const onUpdate = (e) => {
@@ -42,8 +45,13 @@ export function Folder({ folder, handleTreeSearch, handleDelete, handleUpdate ,h
   };
 
   const handleContent = () => {
-    
-    if(!folder.isfolder && folder?.content){
+    const alreadyOpen = openFiles.find(f => f.path === folder.path);
+
+    if (alreadyOpen) {
+        setActiveFile(alreadyOpen);
+        setCode(alreadyOpen.content);
+    }
+    else if (!folder.isfolder) {
       setSelectedFile(folder);
       setActiveFile(folder);
       setCode(folder.content);
@@ -53,25 +61,27 @@ export function Folder({ folder, handleTreeSearch, handleDelete, handleUpdate ,h
         if (alreadyOpen) return prev;
         return [...prev, folder]; 
       });
+    }
+    
   }
-}
 
 
   const icon = folder.isfolder ? (
     <FolderIcon className="size-5 text-yellow-500" />
   ) : (
-    <DocumentTextIcon className="size-5 text-gray-600" />
+    <>{getFileIcon(folder.name)}</>
   );
+  
 
   return (
     <li className="group relative" onContextMenu={onRightClick}>
-      {/* <div className="w-4 h-full absolute left-0 top-0 border-l border-white dark:border-neutral-600"></div> */}
-      <div className="flex items-center gap-2 px-1 py-1 rounded-md hover:bg-zinc-100">
-        
+      
+      <div onClick={() => setIsOpen(!isOpen)} className="flex items-center gap-2 px-1 py-1 rounded-md hover:text-white hover:bg-gray-900 cursor-pointer">
+        <div className="w-4 h-full absolute left-0 top-0 border-l border-white dark:border-neutral-600"></div>
         {folder.isfolder && folder.folders?.length > 0 && (
-          <button onClick={() => setIsOpen(!isOpen)}>
+          <button >
             <ChevronRightIcon
-              className={`size-4 transition-transform ${isOpen ? "rotate-90" : ""}`}
+              className={`size-4 transition-transform ${isOpen ? "rotate-90" : ""} px-0.5`}
             />
           </button>
         )}

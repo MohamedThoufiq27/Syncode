@@ -1,34 +1,44 @@
 
 import {  useEffect, useState } from 'react'
 import CodeEditor from './CodeEditor'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import Navbar from '../Navbar/Navbar'
-import { getRoomId } from '../Navbar/storeRoomId'
+import { getRoomId, storeRoomId } from '../Navbar/storeRoomId'
 import { toast } from 'react-toastify'
 import Sidebar from '../Sidebar/Sidebar'
 import { useSharedData } from '../../hooks/useSharedData'
 import ChatBox from '../Chat/ChatBox'
 import Group from '../Group/Group'
-import VideoChat from '../VideoChat/VideoChat'
 import FileSystem from '../FileSystem/FileSytem'
+import CodeGen from '../CodeGeneration/CodeGen'
 
 
 
 const EditorPage = () => {
-    const {roomid,sidebarOpen,isAuth,language,setLanguage} = useSharedData();
+    const {roomid:urlRoomId} = useParams();
+
+    const {roomid,sidebarOpen,isAuth,language,setLanguage,setRoomId} = useSharedData();
     const [output,setOutput] = useState('');
     const [Loading,setLoading] = useState(false);
     const [runTime,setRunTime] = useState('');
     const [input,setInput] = useState('');
     
+    useEffect(() => {
+        if (urlRoomId) {
+            setRoomId(urlRoomId);
+            storeRoomId(urlRoomId);
+        }
+    }, [urlRoomId]);
 
     useEffect(()=>{
       if(!getRoomId()) return ;
-      toast.success(`you joined the room Successfully !`)
+      toast.success(`you joined the room Successfully !`);
     },[])
 
   
     if(!getRoomId() || !isAuth){
+      toast.dismiss();
+      toast.info('Please Login !')
       return <Navigate to={'/'}/>
     }
   return (
@@ -36,7 +46,7 @@ const EditorPage = () => {
     <div className='flex'>
       <Sidebar />
       {sidebarOpen.isChat && 
-        <div className='w-[25vw] h-screen p-4 bg-gray-900'>
+        <div className='w-[24vw] h-screen p-4 bg-gray-900'>
           <div className='w-[23vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl'>
             <ChatBox/>
           </div>
@@ -44,7 +54,7 @@ const EditorPage = () => {
       }
       {sidebarOpen.isGroup && 
         
-        <div className='w-[17vw] h-screen p-4 bg-gray-900'>
+        <div className='w-[16vw] h-screen p-4 bg-gray-900'>
           <div className='w-[15vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl'>
             <Group/>
           </div>
@@ -52,16 +62,16 @@ const EditorPage = () => {
         
       }
       {sidebarOpen.isFileSystem &&
-        <div className='w-[17vw] h-screen p-4 bg-gray-900'> 
-          <div className='w-[15vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl overflow-auto'>
+        <div className='w-[16vw] h-screen p-4 bg-gray-900'> 
+          <div className='w-[15vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl overflow-y-auto'>
             <FileSystem />
           </div>
         </div>
       }
-      {sidebarOpen.isVideo && 
-        <div className='w-[17vw] h-screen p-4 bg-gray-900'>
-          <div className='w-[15vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl'>
-            <VideoChat />
+      {sidebarOpen.isAskAi && 
+        <div className='w-[30vw] h-screen p-4 bg-gray-900'>
+          <div className='w-[29vw] h-full bg-gray-900 rounded-2xl'>
+            <CodeGen />
           </div>
         </div>
       }

@@ -5,6 +5,7 @@ const cors = require('cors');
 const setupSocket = require('./sockets/socket');
 const codeRoutes = require('./routes/codeRoutes');
 const runCodeRoute = require('./routes/runCodeRoute');
+const copilotRoute = require('./routes/copilotRoute');
 
 const { Server } = require('socket.io');
 
@@ -26,6 +27,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/code',codeRoutes);
 app.use('/api/run',runCodeRoute);
+app.use('/api/copilot',copilotRoute);
 
 
 setupSocket(socketIO);
