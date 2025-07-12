@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import { useSharedData } from '../../hooks/useSharedData';
 import { IoClose } from "react-icons/io5";
 import useTreeHelper from '../../hooks/useTreeHelper';
+import { getFileIcon } from '../../utils/getFileIcon';
 
 
 
@@ -26,8 +27,6 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
     const {updateFileContentInTree} = useTreeHelper();
     const [editorTheme,setEditorTheme] = useState(oneDark);
     const [languageExtension, setLanguageExtension] = useState(null);
-
-
     const [editorHeight,setEditorHeight] = useState('400');
 
     
@@ -111,13 +110,13 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
             console.log("📥 Received file-content-update", filePath);
 
             setOpenFiles((prev) =>
-            prev.map((f) =>
-                f.path === filePath ? { ...f, content } : f
-            )
+                prev.map((f) =>
+                    f.path === filePath ? { ...f, content } : f
+                )
             );
 
             if (activeFile?.path === filePath) {
-            setCode(content);
+                setCode(content);
             }
 
             const updatedTree = updateFileContentInTree(tree, filePath, content);  
@@ -148,23 +147,6 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
         };
 
         load();
-
-        // socket.on('file-content-update', ({ filePath, content }) => {
-        //     setOpenFiles((prev) =>
-        //         prev.map((f) =>
-        //         f.path === filePath ? { ...f, content } : f
-        //     )
-        //     );
-
-        //     // If the updated file is active, also update code
-        //     if (activeFile?.path === filePath) {
-        //         setCode(content);
-        //     }
-        //     const updatedTree = updateFileContentInTree(tree, filePath, content);
-        //     setTree(updatedTree);
-
-        //     console.log('file content received');
-        // });
 
         socket.on('language-update',({language})=>{
             setLanguage(language);
@@ -230,7 +212,7 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
                                 {openFiles.map(file => (
                                     <div
                                     key={file.path}
-                                    className={`relative py-2 tab ${file.path === activeFile?.path ? "active bg-gray-700" : ""} h-fit w-fit flex justify-center items-center text-center bg-gray-900 font-semibold  text-md text-white border-0 mr-2 hover:bg-gray-800 rounded-lg p-1.5`}
+                                    className={`relative py-2 tab ${file.path === activeFile?.path ? "active bg-gray-700" : ""} h-fit w-fit flex justify-center items-center text-center bg-gray-900 font-semibold gap-1  text-md text-white border-0 mr-2 hover:bg-gray-800 rounded-lg p-1.5`}
                                     onClick={() => {
                                         if (activeFile) {
                                             setOpenFiles(prevFiles =>
@@ -248,6 +230,7 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
                                         className={`absolute left-0 top-0 h-1.5 w-full rounded-t-lg transition-all duration-150 bg-linear-to-r from-pink-700 to-violet-700`}
                                         />)
                                     }
+                                    {getFileIcon(file.name)}
                                     {file.name}
 
                                     <button className='mx-1 p-0.5 cursor-pointer hover:bg-zinc-400 rounded-md' onClick={(e) => {

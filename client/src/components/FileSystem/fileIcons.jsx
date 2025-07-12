@@ -1,12 +1,12 @@
 // src/utils/fileIcons.js
 
 // VSC
-import { VscFile, VscFilePdf, VscFileMedia, VscFileZip } from "react-icons/vsc";
-
+import { VscFile, VscFilePdf, VscFileMedia, VscFileZip,VscJson } from "react-icons/vsc";
+import { IoLogoJavascript } from "react-icons/io";
 // Si (Simple Icons)
 import {
-  SiJavascript, SiTypescript, SiPython, SiHtml5, SiCss3,
-  SiJson, SiMarkdown, SiCplusplus, SiGo, SiRust, SiKotlin,
+   SiTypescript, SiPython, SiHtml5, SiCss3,
+   SiMarkdown, SiCplusplus, SiGo, SiRust, SiKotlin,
   SiPhp, SiRuby, SiSwift, SiMysql, SiDocker, SiGit, SiYaml
 } from "react-icons/si";
 import { TbBrandCSharp } from "react-icons/tb";
@@ -20,7 +20,7 @@ import { MdImage, MdAudiotrack } from "react-icons/md";
 import { TbBrandCpp, TbBrandVscode } from "react-icons/tb";
 
 export const fileIconMap = {
-  js: <SiJavascript className="text-yellow-400" />,
+  js: <IoLogoJavascript className="text-yellow-400" />,
   jsx: <FaReact className="text-blue-500" />,
   ts: <SiTypescript className="text-blue-500" />,
   tsx: <FaReact className="text-blue-500" />,
@@ -37,7 +37,7 @@ export const fileIconMap = {
   swift: <SiSwift className="text-orange-500" />,
   html: <SiHtml5 className="text-orange-600" />,
   css: <SiCss3 className="text-blue-600" />,
-  json: <SiJson className="text-yellow-500" />,
+  json: <VscJson className="text-yellow-500" />,
   yaml: <SiYaml className="text-blue-500" />,
   yml: <SiYaml className="text-blue-500" />,
   md: <SiMarkdown className="text-gray-400" />,

@@ -217,7 +217,7 @@ export default function FileSystem() {
   <div className="pt-2 pr-2 rounded-t-2xl flex justify-end items-center gap-1">
     <Tooltip text='Import Folder' position="left">
     <label htmlFor="folderUpload" className="btn btn-primary cursor-pointer">
-      <TbFolderUp className="size-6 text-zinc-800" />
+      <TbFolderUp className="size-6 text-zinc-300" />
     </label>
     </Tooltip>
     <input
@@ -238,7 +238,7 @@ export default function FileSystem() {
     />
     <Tooltip text='Import File' position="left">
       <label htmlFor="singleFileInput"  className="btn cursor-pointer">
-        <BsFileEarmarkArrowUp className="size-6 text-zinc-800" />
+        <BsFileEarmarkArrowUp className="size-6 text-zinc-300" />
       </label>
     </Tooltip>
   </div>
@@ -263,7 +263,7 @@ export default function FileSystem() {
       </ul>
     ) : (
       <div className="h-full w-full flex justify-center items-center">
-        <div className="text-md text-center text-zinc-700">
+        <div className="text-md text-center text-zinc-300">
           Import Any Folder or File to See
         </div>
       </div>

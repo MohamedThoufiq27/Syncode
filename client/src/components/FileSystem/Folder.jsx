@@ -1,13 +1,13 @@
 import {
   ChevronRightIcon,
   DocumentTextIcon,
-  FolderIcon
 } from "@heroicons/react/24/solid";
 import {  useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence ,motion } from "framer-motion";
 import { useSharedData } from "../../hooks/useSharedData";
 import { getFileIcon } from "../../utils/getFileIcon";
+import { IoMdFolder ,IoMdFolderOpen} from "react-icons/io";
 
 
 
@@ -67,7 +67,8 @@ export function Folder({ folder, handleTreeSearch, handleDelete, handleUpdate ,h
 
 
   const icon = folder.isfolder ? (
-    <FolderIcon className="size-5 text-yellow-500" />
+    !isOpen ? <IoMdFolder className="size-5 text-yellow-500" />
+     : <IoMdFolderOpen className="size-5 text-yellow-500" />
   ) : (
     <>{getFileIcon(folder.name)}</>
   );
@@ -76,12 +77,12 @@ export function Folder({ folder, handleTreeSearch, handleDelete, handleUpdate ,h
   return (
     <li className="group relative" onContextMenu={onRightClick}>
       
-      <div onClick={() => setIsOpen(!isOpen)} className="flex items-center gap-2 px-1 py-1 rounded-md hover:text-white hover:bg-gray-900 cursor-pointer">
+      <div onClick={() => setIsOpen(!isOpen)} className="flex items-center gap-2 px-1 py-1 rounded-md text-zinc-300 hover:text-zinc-950 hover:bg-zinc-400 cursor-pointer">
         <div className="w-4 h-full absolute left-0 top-0 border-l border-white dark:border-neutral-600"></div>
         {folder.isfolder && folder.folders?.length > 0 && (
           <button >
             <ChevronRightIcon
-              className={`size-4 transition-transform ${isOpen ? "rotate-90" : ""} px-0.5`}
+              className={`size-4 transition-transform text-zinc-300 ${isOpen ? "rotate-90" : ""} px-0.5`}
             />
           </button>
         )}
@@ -105,7 +106,7 @@ export function Folder({ folder, handleTreeSearch, handleDelete, handleUpdate ,h
       {(isAddingFile || isAddingFolder) && (
         <div className="flex items-center gap-2 pl-6 py-1">
           { isAddingFolder? (
-            <FolderIcon className="size-5 text-blue-500" />
+            <IoMdFolder className="size-5 text-blue-500" />
           ) : (
             <DocumentTextIcon className="size-5 text-gray-700" />
           )}

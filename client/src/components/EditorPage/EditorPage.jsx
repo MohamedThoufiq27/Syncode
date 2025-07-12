@@ -62,15 +62,15 @@ const EditorPage = () => {
         
       }
       {sidebarOpen.isFileSystem &&
-        <div className='w-[16vw] h-screen p-4 bg-gray-900'> 
-          <div className='w-[15vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl overflow-y-auto'>
+        <div className='w-[16vw] h-screen p-4 bg-gray-900 '> 
+          <div className='w-[15vw] h-full border-zinc-500 border-2  rounded-2xl overflow-y-auto'>
             <FileSystem />
           </div>
         </div>
       }
       {sidebarOpen.isAskAi && 
         <div className='w-[30vw] h-screen p-4 bg-gray-900'>
-          <div className='w-[29vw] h-full bg-gray-900 rounded-2xl'>
+          <div className='w-[29vw] h-full border-zinc-500 border-2 rounded-2xl'>
             <CodeGen />
           </div>
         </div>

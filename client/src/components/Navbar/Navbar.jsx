@@ -47,7 +47,15 @@ const Navbar =  () => {
             <h1 className="p-2 text-3xl font-semibold text-gray-900 dark:text-white md:text-4xl lg:text-5xl">
                 Syn<span className="text-transparent bg-clip-text bg-gradient-to-r to-purple-500 from-pink-500">Code</span> 
             </h1>
-            {username && <h2 className='px-2 text-white font-mono text-xl'>Hi <span className='truncate w-2 text-transparent bg-clip-text bg-gradient-to-r to-purple-500 from-pink-500'>{username}</span> Welcome to SynCode!</h2>}
+            {username && (
+                <h2 className="px-2 text-white font-inter font-extralight text-xl mb-5 max-w-full inline-flex items-center justify-center">
+                    Hi
+                    <span className="px-2  text-transparent bg-clip-text bg-gradient-to-r to-purple-500 from-pink-500">
+                    {" "+username.split(' ').slice(0, 2).join(' ')+" "}
+                    </span>
+                    Welcome to SynCode!
+                </h2>
+            )}
             </div>
             
             <div className='col-start-2 p-2 flex justify-end items-center'>

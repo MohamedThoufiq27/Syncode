@@ -47,10 +47,19 @@ const Home = () => {
       <div className="flex flex-col-reverse lg:flex-row justify-around items-center flex-1 p-12 lg:p-6 gap-12">
         {/* Join Card */}
         <div className='flex flex-col justify-center'>
-        <h1 className="w-full inline-flex justify-center mb-10 text-3xl font-semibold text-gray-900 dark:text-white md:text-4xl lg:text-5xl">
+        <h1 className="w-full inline-flex justify-center mb-10 text-3xl font-bold  text-gray-900 dark:text-white md:text-4xl lg:text-5xl">
                 Syn<span className="text-transparent bg-clip-text bg-gradient-to-r to-purple-500 from-pink-500">Code</span> 
             </h1>
-        {username && <h2 className='truncate px-2 text-white font-thin text-lg mb-5'>Hi <span className='truncate w-2 text-transparent bg-clip-text bg-gradient-to-r to-purple-500 from-pink-500'>{username}</span> Welcome to SynCode!</h2>}
+        {username && (
+          <h2 className="px-2 text-white font-inter font-medium text-lg mb-5 max-w-full inline-flex items-center justify-center">
+            Hi
+            <span className="px-2 text-transparent bg-clip-text bg-gradient-to-r to-purple-500 from-pink-500">
+              {" "+username.split(' ').slice(0, 2).join(' ')+" "}
+            </span>
+            Welcome to SynCode!
+          </h2>
+        )}
+
         <div className="w-full max-w-md bg-gradient-to-tr from-purple-400 via-pink-500 to-purple-500 p-1 rounded-3xl shadow-xl">
           <div className="bg-[#0f172a] rounded-3xl px-8 py-10 backdrop-blur-lg">
             <h1 className="text-3xl font-bold mb-4 text-center">

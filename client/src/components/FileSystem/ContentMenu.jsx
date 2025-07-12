@@ -21,6 +21,7 @@ export function ContextMenu({ x, y, onClose, onAction }) {
         className="px-3 py-2 hover:bg-zinc-100 cursor-pointer"
         onClick={() => onAction("rename")}
       >
+        
         ✏️ Rename
       </li>
       <li
