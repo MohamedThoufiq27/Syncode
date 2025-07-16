@@ -15,3 +15,27 @@
 @theme {
   --default-font-family: "Inter", sans-serif;
 }
+
+.remote-cursor-label {
+  position: absolute;
+  display: inline-block;
+  background-color: rgba(147, 197, 253, 0.9);
+  color: black;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.remote-cursor-label::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 8px;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid rgba(147, 197, 253, 0.9);
+}

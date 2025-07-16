@@ -39,6 +39,16 @@ module.exports = function(io){
             }
         })
 
+        socket.on('cursor-update', ({ roomid, userId, username, cursorPos, filePath }) => {
+            socket.to(roomid).emit('remote-cursor-update', {
+                userId,
+                username,
+                cursorPos,
+                filePath
+            });
+        });
+
+
         socket.on("send-message", (data) => {
             socket.to(data.roomid).emit("receive-message", data);
         });

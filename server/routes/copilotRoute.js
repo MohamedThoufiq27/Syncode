@@ -10,8 +10,8 @@ router.post("/", async (req, res) => {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "anthropic/claude-3.7-sonnet",
-        models:['google/gemini-2.0-flash-001','openai/gpt-4o-mini'],
+        model: "deepseek/deepseek-chat-v3-0324:free",
+        models:['google/gemini-2.0-flash-exp:free','deepseek/deepseek-r1-0528:free'],
         messages: [
           {
             role: "system",

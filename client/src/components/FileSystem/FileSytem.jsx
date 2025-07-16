@@ -9,6 +9,8 @@ import socket from "../../socket";
 import LZString from "lz-string";
 import Tooltip from "../Tooltip/Tooltip";
 import { saveCode } from "../../api";
+import { downloadAsZip } from "../../utils/downloadAsZip";
+import { FaFileZipper } from "react-icons/fa6";
 
 export default function FileSystem() {
   const {insertNode,deleteNode,updateNode} = useTreeHelper();
@@ -244,7 +246,7 @@ export default function FileSystem() {
   </div>
 
   {/* Main content area (tree or fallback) */}
-  <div className="flex-1">
+  <div className="flex-1 my-2">
     {tree ? (
       <ul>
         <Folder
@@ -268,6 +270,16 @@ export default function FileSystem() {
         </div>
       </div>
     )}
+  </div>
+  <div className="w-full h-12 p-2 my-1 inline-flex justify-center">
+    <Tooltip text='Download As Zip' position="top">
+      <button
+        className="px-4 py-2 rounded cursor-pointer"
+        onClick={() => downloadAsZip(tree,tree.name)}
+      >
+        < FaFileZipper className="text-zinc-300 size-5" /> 
+      </button>
+    </Tooltip>
   </div>
 
   {/* Context Menu */}

@@ -1,9 +1,10 @@
-//import socket from "../socket";
+
 
 import CodeMirror, { oneDark,defaultLightThemeOption} from '@uiw/react-codemirror';
 import { VscRunAll } from "react-icons/vsc";
-
-import {  useEffect, useState } from "react";
+import { EditorView } from '@codemirror/view';
+import debounce from 'lodash/debounce';
+import {  useEffect, useState,useRef } from "react";
 import socket from '../../socket';
 //import {useDebounce} from 'react-use';
 import { getCode, saveCode ,runCode } from '../../api';
@@ -16,20 +17,45 @@ import useTreeHelper from '../../hooks/useTreeHelper';
 import { getFileIcon } from '../../utils/getFileIcon';
 
 
-
-
-
-
-
-
 const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime,Loading,input}) =>{
-    const {code,setCode,openFiles,setActiveFile,setOpenFiles,activeFile,tree,setTree} = useSharedData();
+    const {code,setCode,openFiles,setActiveFile,setOpenFiles,activeFile,tree,setTree,username} = useSharedData();
     const {updateFileContentInTree} = useTreeHelper();
     const [editorTheme,setEditorTheme] = useState(oneDark);
     const [languageExtension, setLanguageExtension] = useState(null);
     const [editorHeight,setEditorHeight] = useState('400');
+    const editorRef = useRef(null);
+    const lastCursorPosRef = useRef(null);
+    const ignoreCursorUntil = useRef(0);
 
     
+
+    const emitCursorPosition = debounce((pos) => {
+        if (!editorRef.current || !activeFile?.path) return;
+
+        socket.emit('cursor-update', {
+            roomid,
+            userId: socket.id,
+            username: username,
+            filePath: activeFile.path,
+            cursorPos: pos,
+        });
+
+        console.log("📤 (debounced) Emitting cursor at", pos, "for", username); 
+    }, 100); // 100ms delay is smooth & responsive
+
+
+    const cursorBroadcastExtension = EditorView.updateListener.of((update) => {
+        const now = Date.now();
+        if (now < ignoreCursorUntil.current) return;
+        
+        const pos = update.state.selection.main.head;
+        if ((update.selectionSet || update.docChanged || pos !== lastCursorPosRef.current) && editorRef.current) {
+            lastCursorPosRef.current = pos;
+
+            emitCursorPosition(pos);
+        }
+    });
+
     const loadLanguageExtension = async (lang) => {
         switch (lang) {
             case "javascript":
@@ -62,6 +88,52 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
             return (await import("@codemirror/lang-javascript")).javascript(); // default
         }
     };
+
+    useEffect(() => {
+        socket.on('remote-cursor-update', ({ userId, username, cursorPos, filePath }) => {
+            if (
+                userId === socket.id ||            // Ignore self
+                !editorRef.current ||              // Editor not mounted
+                filePath !== activeFile?.path ||   // Not current file
+                cursorPos < 1                      // Ignore invalid or 0 position
+            ) return;
+
+            
+
+            const editorRect = editorRef.current.dom.getBoundingClientRect();
+            const coords = editorRef.current.coordsAtPos(cursorPos);
+            if (!coords) return;
+
+            const existing = document.getElementById(`cursor-${userId}`);
+            if (existing) existing.remove();
+
+            const tag = document.createElement("div");
+            tag.id = `cursor-${userId}`;
+            tag.textContent = username;
+            tag.style.position = "absolute";
+            tag.style.left = `${editorRect.left + coords.left -80}px`;
+            tag.style.top = `${editorRect.top + coords.top - 200}px`;
+            tag.style.background = "#6366f1";
+            tag.style.color = "#fff";
+            tag.style.padding = "2px 6px";
+            tag.style.borderRadius = "4px";
+            tag.style.fontSize = "12px";
+            tag.style.pointerEvents = "none";
+            tag.style.zIndex = "10";
+            tag.classList.add('remote-cursor-label');
+
+            document.body.appendChild(tag);
+            console.log("🔁 Remote cursor from", username, userId, "at", cursorPos);
+
+
+            setTimeout(() => tag.remove(), 5000); // auto-remove after 5 seconds
+        });
+
+        return () => {
+            socket.off('remote-cursor-update');
+        };
+    }, [activeFile]);
+
 
     useEffect(() => {
         const loadLang = async () => {
@@ -116,10 +188,13 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
             );
 
             if (activeFile?.path === filePath) {
+                const now = Date.now();
+                ignoreCursorUntil.current = now + 200;
                 setCode(content);
             }
 
-            const updatedTree = updateFileContentInTree(tree, filePath, content);  
+            const updatedTree = updateFileContentInTree(tree, filePath, content);
+        
             setTree(updatedTree);
         });
 
@@ -282,8 +357,11 @@ const CodeEditor = ({roomid,language,setLanguage,setOutput,setLoading,setRunTime
                     value={code}
                     height={`${editorHeight}px`}
                     theme={editorTheme}
-                    extensions={[languageExtension,autocompletion()]}
+                    extensions={[languageExtension,autocompletion(),cursorBroadcastExtension]}
                     onChange={(value)=>(handleCodeChange(value))}
+                    onCreateEditor={(view) => {
+                        editorRef.current = view;
+                    }}
                 />}
             </div>
 

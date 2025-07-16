@@ -1,6 +1,6 @@
 const http = require('http');
 const express= require('express');
-const mongoose=require('./db');
+const mongoose=require('./storage/db');
 const cors = require('cors');
 const setupSocket = require('./sockets/socket');
 const codeRoutes = require('./routes/codeRoutes');
@@ -22,12 +22,15 @@ const socketIO = new Server(server,{
     }
 })
 
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ limit: '100mb', extended: true }));
+
 
 app.use(cors());
-app.use(express.json());
 app.use('/api/code',codeRoutes);
 app.use('/api/run',runCodeRoute);
 app.use('/api/copilot',copilotRoute);
+
 
 
 setupSocket(socketIO);
