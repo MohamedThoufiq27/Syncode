@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = 'https://syncode-7364.onrender.com';
 
 export const saveCode = async ({roomid,language,tree}) =>{
     await fetch(`${BASE_URL}/code/save`,{
