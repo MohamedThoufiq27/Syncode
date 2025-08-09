@@ -2,6 +2,8 @@
 
 A powerful real-time code editor for teams and individuals. Collaborate live, write and save code in multiple files, and enjoy seamless editing just like Google Docs — but for code!
 
+# Try-Out -> https://syncode-client.onrender.com/
+
 ## 🔧 Tech Stack
 
 - **Frontend**: React, Tailwind CSS, CodeMirror
