@@ -138,7 +138,9 @@ export const SharedDataProvider = ({ children }) => {
             if(user!=null){
                 setUserName(user.displayName);
                 setIsAuth(true);
-                toast.success(`Logged in as ${user.displayName}`)
+                if(user.displayName){
+                    toast.success(`Logged in as ${user.displayName}`)
+                }
             }else{
                 setUserName(null);
             }
