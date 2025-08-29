@@ -7,7 +7,7 @@ const BASE_URL_PROD = 'https://syncode-7364.onrender.com/api/get-agora-token';
 
 export const getAgoraToken = async (channelName,uid) => {
   try{
-    const res = await axios.get(`${BASE_URL_TESTING}?channel=${channelName}&uid=${uid}`);
+    const res = await axios.get(`${BASE_URL_PROD}?channel=${channelName}&uid=${uid}`);
     // console.log(res.data);
     return res.data;
   }
