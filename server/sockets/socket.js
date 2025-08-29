@@ -6,12 +6,12 @@ module.exports = function(io){
     io.on('connection',(socket) =>{
         console.log("user Connected");
 
-        socket.on('join-room',({roomid,username}) => {
+        socket.on('join-room',({roomid,username,uid}) => {
             if (!rooms[roomid]) rooms[roomid] = [];
 
             const alreadyPresent = rooms[roomid].some(user => user.id === socket.id);
             if (!alreadyPresent) {
-                rooms[roomid].push({ id: socket.id, name: username });
+                rooms[roomid].push({ id: socket.id, name: username,uid:uid });
             }
 
             socket.join(roomid);

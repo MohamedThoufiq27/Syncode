@@ -11,13 +11,14 @@ import ChatBox from '../Chat/ChatBox'
 import Group from '../Group/Group'
 import FileSystem from '../FileSystem/FileSytem'
 import CodeGen from '../CodeGeneration/CodeGen'
+import GlobalVideo from '../VideoChat/GlobalVideo'
 
 
 
 const EditorPage = () => {
     const {roomid:urlRoomId} = useParams();
 
-    const {roomid,sidebarOpen,isAuth,language,setLanguage,setRoomId} = useSharedData();
+    const {roomid,sidebarOpen,isAuth,language,setLanguage,setRoomId,joined} = useSharedData();
     const [output,setOutput] = useState('');
     const [Loading,setLoading] = useState(false);
     const [runTime,setRunTime] = useState('');
@@ -46,7 +47,7 @@ const EditorPage = () => {
     <div className='flex'>
       <Sidebar />
       {sidebarOpen.isChat && 
-        <div className='w-[24vw] h-screen p-4 bg-gray-900'>
+        <div className='w-[24.5vw] h-screen p-4 bg-gray-900'>
           <div className='w-[23vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl'>
             <ChatBox/>
           </div>
@@ -54,7 +55,7 @@ const EditorPage = () => {
       }
       {sidebarOpen.isGroup && 
         
-        <div className='w-[16vw] h-screen p-4 bg-gray-900'>
+        <div className='w-[16.5vw] h-screen p-4 bg-gray-900'>
           <div className='w-[15vw] h-full bg-linear-to-b from-fuchsia-300 to-fuchsia-700 rounded-2xl'>
             <Group/>
           </div>
@@ -62,27 +63,42 @@ const EditorPage = () => {
         
       }
       {sidebarOpen.isFileSystem &&
-        <div className='w-[16vw] h-screen p-4 bg-gray-900 '> 
+        <div className='w-[16.5vw] h-screen p-4 bg-gray-900 '> 
           <div className='w-[15vw] h-full border-zinc-500 border-2  rounded-2xl overflow-y-auto'>
             <FileSystem />
           </div>
         </div>
       }
+
+      {/* {sidebarOpen.isVideoChat &&
+        <div className='w-full h-screen p-4 bg-gray-900 '> 
+          <div className='w-full h-full border-zinc-500 border-2  rounded-2xl overflow-y-auto'>
+            <GlobalVideo />
+          </div>
+        </div>
+      } */}
+
       {sidebarOpen.isAskAi && 
-        <div className='w-[30vw] h-screen p-4 bg-gray-900'>
+        <div className='w-[30.5vw] h-screen p-4 bg-gray-900'>
           <div className='w-[29vw] h-full border-zinc-500 border-2 rounded-2xl'>
             <CodeGen />
           </div>
         </div>
       }
-    <main className=' grid grid-cols-5 grid-rows-7 gap-0.5 sm:gap-1 md:gap-2 lg:gap-4 dark:bg-gray-900 bg-white w-screen h-screen'>
+
+     {sidebarOpen.isVideoChat ? (
+        <div className="flex-1 h-screen p-4 bg-gray-900">
+          <div className="w-full h-full border-zinc-500 border-2 rounded-2xl overflow-hidden">
+            <GlobalVideo floating={false}  />
+          </div>
+        </div>
+      ) : (
+        <main className='grid grid-cols-5 grid-rows-7 gap-0.5 sm:gap-1 md:gap-2 lg:gap-4 dark:bg-gray-900 bg-white w-screen h-screen'>
           <div className='col-span-5 col-start-1 row-start-1'>
-            <Navbar  />
+            <Navbar />
           </div>
 
-          
-          {roomid && 
-            // <div className='p-1 mx-1.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500'>
+          {roomid && (
             <div className='mb-3 ml-3 col-span-3 row-span-6 col-start-1 row-start-2 overflow-hidden text-sm rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500'>
               <CodeEditor 
                 roomid={roomid}  
@@ -95,15 +111,10 @@ const EditorPage = () => {
                 input={input}
               />
             </div> 
-           
-            // <div className='flex justify-center items-center'>
-            
-            
-            // <Navigate to="/" />
-          }
+          )}
 
-          {roomid &&
-            <div className='col-span-2 row-span-2 col-start-4 row-start-2 p-2.5 mr-3  font-medium rounded-md bg-gradient-to-br from-purple-500 to-pink-500'>
+          {roomid && (
+            <div className='col-span-2 row-span-2 col-start-4 row-start-2 p-2.5 mr-3 font-medium rounded-md bg-gradient-to-br from-purple-500 to-pink-500'>
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -111,21 +122,24 @@ const EditorPage = () => {
                 className="w-full h-full dark:bg-gray-700 bg-white overflow-auto dark:text-white text-zinc-950 p-3 rounded-lg resize-none outline-none font-mono whitespace-pre"
               />
             </div>
-          }
+          )}
           
-          {roomid && 
+          {roomid && (
             <div className='col-span-2 row-span-4 col-start-4 row-start-4 p-2.5 mr-3 mb-3 text-sm font-medium rounded-md group bg-gradient-to-br from-purple-500 to-pink-500'>
-                <pre className="p-3 overflow-auto dark:bg-gray-700 bg-white dark:text-white text-zinc-950 rounded-lg h-full">
-                    {!Loading && output}
-                    {!Loading && output && '\n\nExecuted in : '+runTime+' ms'}
-                   
-                </pre>
-            </div>          
-          }
-
-    </main>
+              <pre className="p-3 overflow-auto dark:bg-gray-700 bg-white dark:text-white text-zinc-950 rounded-lg h-full">
+                {!Loading && output}
+                {!Loading && output && '\n\nExecuted in : ' + runTime + ' ms'}
+              </pre>
+            </div>
+          )}
+        </main>
+      )}
+       {joined && !sidebarOpen.isVideoChat && (
+        <GlobalVideo floating={true} />
+      )}
     </div>
   )
 }
 
 export default EditorPage
+
