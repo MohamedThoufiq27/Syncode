@@ -70,6 +70,7 @@ export const SharedDataProvider = ({ children }) => {
   const localVideoRef = useRef(null);
   const [pinnedUser, setPinnedUser] = useState(null);
   const [trackState, setTrackState] = useState(0);
+  const [joiningCall,setJoiningCall] = useState(false);
 
   const pinUser = (uid) => setPinnedUser(uid);
   const unpinUser = () => setPinnedUser(null);
@@ -225,6 +226,7 @@ export const SharedDataProvider = ({ children }) => {
     }
 
     try {
+      setJoiningCall(true);
       console.log("🚀 Attempting to join channel...");
       const TOKEN = await getAgoraToken(roomid, user.uid);
       await client.join(APP_ID, roomid, TOKEN.token, user.uid);
@@ -243,6 +245,7 @@ export const SharedDataProvider = ({ children }) => {
       await client.publish([audioTrack, videoTrack]);
       setJoined(true);
       console.log("🎉 Joined and published successfully!");
+      setJoiningCall(false);
 
     } catch (error) {
       console.error("❌ Failed to join or create tracks:", error);
@@ -300,7 +303,8 @@ export const SharedDataProvider = ({ children }) => {
     pinnedUser, pinUser, unpinUser,
     toggleMic, toggleVideo,
     localAudioTrack, localVideoTrack,
-    trackState
+    trackState,
+    joiningCall
   };
 
   return (

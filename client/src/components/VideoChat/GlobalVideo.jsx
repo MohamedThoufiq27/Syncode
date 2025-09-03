@@ -22,8 +22,11 @@ const GlobalVideo = ({ floating = false }) => {
     pinnedUser,
     pinUser,
     unpinUser,
-    members
+    members,
+    joiningCall
   } = useSharedData();
+
+
 
   // console.log('MEMBERS ARRAY FROM SERVER:', JSON.stringify(members, null, 2));
   
@@ -71,7 +74,7 @@ const GlobalVideo = ({ floating = false }) => {
             onClick={joinChannel}
             className="px-8 py-4 bg-green-600 text-white rounded-lg text-xl font-semibold hover:bg-green-700 transition-colors"
           >
-            Join Call
+            {!joiningCall ? 'Join Call' : 'Joining. . .'} 
           </button>
         </div>
       );
